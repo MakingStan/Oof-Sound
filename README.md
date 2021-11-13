@@ -1,2 +1,2 @@
-# Example
-An example greeter plugin
+#Oef Sound
+Makes an oef sound when you die or take damage.
