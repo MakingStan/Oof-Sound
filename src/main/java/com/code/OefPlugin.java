@@ -8,6 +8,7 @@ import javax.sound.sampled.*;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -20,7 +21,7 @@ import java.io.IOException;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Oef Sound"
+	name = "Oof Sound"
 )
 public class OefPlugin extends Plugin
 {
@@ -55,6 +56,7 @@ public class OefPlugin extends Plugin
 	{
 		overlayManager.remove(overlay);
 	}
+
 
 	@Subscribe
 	public void onAnimationChanged(AnimationChanged animationChanged)
@@ -106,9 +108,12 @@ public class OefPlugin extends Plugin
 				soundFile = AudioSystem.getAudioInputStream(new File( "src/main/resources/RobloxOefSound.wav"));
 			}
 
-
 			clip.open(soundFile);
+			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			float volumeValue = config.volume()-100;
+			volume.setValue(volumeValue);
 			clip.loop(0);
+			clip.start();
 		}
 		catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex)
 		{

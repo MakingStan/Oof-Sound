@@ -42,7 +42,7 @@ public class OefOverlay extends Overlay {
     @Override
     public Dimension render(Graphics2D graphics) {
         panelComponent.getChildren().clear();
-        String overlayTitle = "Oefs:";
+        String overlayTitle = "Oofs:";
 
         // Build overlay title (Current task:)
         panelComponent.getChildren().add(TitleComponent.builder()

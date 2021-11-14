@@ -6,13 +6,13 @@ import net.runelite.client.config.ConfigItem;
 
 import javax.swing.*;
 
-@ConfigGroup("Oef Sound")
+@ConfigGroup("Oof Sound")
 public interface OefConfig extends Config
 {
 	@ConfigItem(
 		keyName = "Death",
 		name = "Death",
-		description = "Make an oef sound when you die!"
+		description = "Make an oof sound when you die!"
 	)
 	default boolean death()
 	{
@@ -22,7 +22,7 @@ public interface OefConfig extends Config
 	@ConfigItem(
 			keyName = "Damage",
 			name = "Damage",
-			description = "Make an oef sound when you take damage!"
+			description = "Make an oof sound when you take damage!"
 	)
 	default boolean damage()
 	{
@@ -30,13 +30,13 @@ public interface OefConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "Roblox/Minecraft oef!",
-			name = "Roblox/Minecraft oef!",
-			description = "Toggle the Roblox/Minecraft oef!"
+			keyName = "Roblox/Minecraft oof!",
+			name = "Roblox/Minecraft oof!",
+			description = "Toggle the Roblox/Minecraft oof!"
 	)
 	default boolean getTypeOfSound()
 	{
-		return true; //roblox oef is false, minecraft is true
+		return true; //roblox ooff is false, minecraft is true
 	}
 
 	@ConfigItem(
@@ -47,5 +47,15 @@ public interface OefConfig extends Config
 	default boolean overlay()
 	{
 		return true;
+	}
+
+	@ConfigItem(
+			keyName = "Volume",
+			name = "Volume",
+			description = "At what volume you want to play the oof sounds."
+	)
+	default int volume()
+	{
+		return 80;
 	}
 }
