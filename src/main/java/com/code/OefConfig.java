@@ -29,15 +29,6 @@ public interface OefConfig extends Config
 		return true;
 	}
 
-	@ConfigItem(
-			keyName = "Roblox/Minecraft oof!",
-			name = "Roblox/Minecraft oof!",
-			description = "Toggle the Roblox/Minecraft oof!"
-	)
-	default boolean getTypeOfSound()
-	{
-		return true; //roblox ooff is false, minecraft is true
-	}
 
 	@ConfigItem(
 			keyName = "Overlay",

@@ -4,6 +4,7 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 import javax.sound.sampled.*;
+import javax.swing.*;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -14,8 +15,11 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.overlay.OverlayManager;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -23,8 +27,7 @@ import java.io.IOException;
 @PluginDescriptor(
 	name = "Oof Sound"
 )
-public class OefPlugin extends Plugin
-{
+public class OefPlugin extends Plugin {
 
 	public static int oefCount = 0;
 
@@ -39,7 +42,6 @@ public class OefPlugin extends Plugin
 
 	@Inject
 	private OefOverlay overlay;
-
 
 
 	public Clip clip;
@@ -58,15 +60,16 @@ public class OefPlugin extends Plugin
 	}
 
 
+
 	@Subscribe
 	public void onAnimationChanged(AnimationChanged animationChanged)
 	{
-		if(client.getLocalPlayer().getHealthRatio() != 0) return;
-		if(client.getLocalPlayer().getAnimation() != AnimationID.DEATH) return;
-		
-		if(client.getGameState() == GameState.LOGGED_IN )
+		if (client.getLocalPlayer().getHealthRatio() != 0) return;
+		if (client.getLocalPlayer().getAnimation() != AnimationID.DEATH) return;
+
+		if (client.getGameState() == GameState.LOGGED_IN)
 		{
-			if(config.death())
+			if (config.death())
 			{
 				System.out.println("Death");
 
@@ -79,11 +82,11 @@ public class OefPlugin extends Plugin
 	public void onHitsplatApplied(HitsplatApplied hitsplatApplied)
 	{
 		Actor actor = hitsplatApplied.getActor();
-		if(actor == client.getLocalPlayer())
+		if (actor == client.getLocalPlayer())
 		{
-			if(client.getGameState() == GameState.LOGGED_IN)
+			if (client.getGameState() == GameState.LOGGED_IN)
 			{
-				if(config.damage())
+				if (config.damage())
 				{
 					playSound();
 				}
@@ -99,18 +102,13 @@ public class OefPlugin extends Plugin
 			AudioInputStream soundFile;
 			Clip clip = AudioSystem.getClip();
 
-			if(config.getTypeOfSound())
-			{
-				soundFile = AudioSystem.getAudioInputStream(new File( "src/main/resources/MinecraftOefSound.wav"));
-			}
-			else
-			{
-				soundFile = AudioSystem.getAudioInputStream(new File( "src/main/resources/RobloxOefSound.wav"));
-			}
+			soundFile = AudioSystem.getAudioInputStream(new File("src/main/resources/MinecraftOefSound.wav"));
 
 			clip.open(soundFile);
+
 			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-			float volumeValue = config.volume()-100;
+			float volumeValue = config.volume() - 100;
+
 			volume.setValue(volumeValue);
 			clip.loop(0);
 			clip.start();
@@ -128,4 +126,5 @@ public class OefPlugin extends Plugin
 	{
 		return configManager.getConfig(OefConfig.class);
 	}
+
 }
