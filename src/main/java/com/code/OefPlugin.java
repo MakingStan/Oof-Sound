@@ -50,7 +50,6 @@ public class OefPlugin extends Plugin {
 	@Override
 	protected void startUp() throws Exception
 	{
-		playSound();
 		overlayManager.add(overlay);
 	}
 
