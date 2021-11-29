@@ -33,14 +33,16 @@ import net.runelite.client.ui.overlay.components.TitleComponent;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class OefOverlay extends Overlay {
+public class OefOverlay extends Overlay
+{
     private final PanelComponent panelComponent = new PanelComponent();
 
     @Inject
     OefConfig config;
 
     @Override
-    public Dimension render(Graphics2D graphics) {
+    public Dimension render(Graphics2D graphics)
+    {
         panelComponent.getChildren().clear();
         String overlayTitle = "Oofs:";
 
@@ -59,16 +61,21 @@ public class OefOverlay extends Overlay {
                 .left(String.valueOf(OefPlugin.oefCount))
                 .build());
 
-        if(config.overlay()) {
+        if(config.overlay())
+        {
             return panelComponent.render(graphics);
-        } else {
+        }
+        else
+        {
             return null;
         }
 
 
     }
+
     @Inject
-    private OefOverlay()  {
+    private OefOverlay()
+    {
         setPosition(OverlayPosition.TOP_LEFT);
     }
 }

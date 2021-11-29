@@ -4,24 +4,18 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 import javax.sound.sampled.*;
-import javax.swing.*;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.AnimationChanged;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 @Slf4j
 @PluginDescriptor(
@@ -30,6 +24,10 @@ import java.io.IOException;
 public class OefPlugin extends Plugin {
 
 	public static int oefCount = 0;
+
+
+
+
 
 	@Inject
 	private OverlayManager overlayManager;
@@ -45,11 +43,14 @@ public class OefPlugin extends Plugin {
 
 
 	public Clip clip;
-	private AudioInputStream input;
+
+	public OefPlugin() {
+	}
 
 	@Override
 	protected void startUp() throws Exception
 	{
+		playSound();
 		overlayManager.add(overlay);
 	}
 
@@ -95,29 +96,40 @@ public class OefPlugin extends Plugin {
 	}
 
 
-	private void playSound() {
-		try
+	private void playSound()
+	{
+		File soundFile = new File("src/main/resources/MinecraftOefSound.wav");
+
+		if(!tryToLoadFile(soundFile)) return;
+
+		oefCount++;
+
+		//volume
+		FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+		float volumeValue = config.volume() - 100;
+
+		volume.setValue(volumeValue);
+
+		clip.loop(0);
+	}
+
+	private boolean tryToLoadFile(File soundFile)
+	{
+		if (soundFile.exists())
 		{
-			oefCount++;
-			AudioInputStream soundFile;
-			Clip clip = AudioSystem.getClip();
-
-			soundFile = AudioSystem.getAudioInputStream(new File("src/main/resources/MinecraftOefSound.wav"));
-
-			clip.open(soundFile);
-
-			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-			float volumeValue = config.volume() - 100;
-
-			volume.setValue(volumeValue);
-			clip.loop(0);
-			clip.start();
+			try (InputStream fileStream = new BufferedInputStream(new FileInputStream(soundFile));
+				 AudioInputStream sound = AudioSystem.getAudioInputStream(fileStream))
+			{
+				clip = AudioSystem.getClip();
+				clip.open(sound);
+				return true;
+			}
+			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e)
+			{
+				log.warn("Could not load the file: ", e);
+			}
 		}
-		catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex)
-		{
-			ex.printStackTrace();
-		}
-
+		return false;
 	}
 
 
