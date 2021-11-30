@@ -57,6 +57,7 @@ public class OefPlugin extends Plugin {
 	protected void shutDown() throws Exception
 	{
 		overlayManager.remove(overlay);
+		clip.close();
 	}
 
 
@@ -94,9 +95,17 @@ public class OefPlugin extends Plugin {
 		}
 	}
 
-
 	private void playSound()
 	{
+		//if the clip is already open and we want a new one
+		if(clip != null)
+		{
+			if(clip.getMicrosecondPosition() == clip.getMicrosecondLength())
+			{
+				clip.close();
+			}
+		}
+
 		File soundFile = new File("src/main/resources/MinecraftOefSound.wav");
 
 		if(!tryToLoadFile(soundFile)) return;
@@ -108,7 +117,6 @@ public class OefPlugin extends Plugin {
 		float volumeValue = config.volume() - 100;
 
 		volume.setValue(volumeValue);
-
 		clip.loop(0);
 	}
 
