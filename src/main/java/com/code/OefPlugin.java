@@ -97,13 +97,9 @@ public class OefPlugin extends Plugin {
 
 	private void playSound()
 	{
-		//if the clip is already open and we want a new one
 		if(clip != null)
 		{
-			if(clip.getMicrosecondPosition() == clip.getMicrosecondLength())
-			{
-				clip.close();
-			}
+			clip.close();
 		}
 
 		File soundFile = new File("src/main/resources/MinecraftOefSound.wav");
