@@ -4,9 +4,7 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 import javax.sound.sampled.*;
-import javax.swing.*;
 
-import jdk.internal.org.jline.utils.Log;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -98,7 +96,6 @@ public class OefPlugin extends Plugin {
 		}
 	}
 
-	@SneakyThrows
 	private void playSound()
 	{
 		if(clip != null)
@@ -108,11 +105,17 @@ public class OefPlugin extends Plugin {
 
 
 		/* fix for not working in a jar */
-		Class c = Class.forName("com.code.OefPlugin");
-		URL url = c.getClassLoader().getResource(soundFilePath);
-		AudioInputStream soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
+		Class c = null;
+		AudioInputStream soundFileAudioInputStream = null;
+		try {
+			c = Class.forName("com.code.OefPlugin");
+			URL url = c.getClassLoader().getResource(soundFilePath);
+			soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
+		} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
+			e.printStackTrace();
+		}
 
-		if(soundFileAudioInputStream == null) System.out.println("issue with soundaudio filestream");
+		if(soundFileAudioInputStream == null) return;
 		if(!tryToLoadFile(soundFileAudioInputStream)) return;
 
 		oofCount++;
