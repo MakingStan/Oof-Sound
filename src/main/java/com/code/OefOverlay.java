@@ -58,7 +58,7 @@ public class OefOverlay extends Overlay
                 50));
 
         panelComponent.getChildren().add(LineComponent.builder()
-                .left(String.valueOf(OefPlugin.oefCount))
+                .left(String.valueOf(OefPlugin.oofCount))
                 .build());
 
         if(config.overlay())

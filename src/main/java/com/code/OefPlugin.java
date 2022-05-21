@@ -4,7 +4,10 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 import javax.sound.sampled.*;
+import javax.swing.*;
 
+import jdk.internal.org.jline.utils.Log;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.AnimationChanged;
@@ -16,6 +19,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 import java.io.*;
+import java.net.URL;
 
 @Slf4j
 @PluginDescriptor(
@@ -23,10 +27,9 @@ import java.io.*;
 )
 public class OefPlugin extends Plugin {
 
-	public static int oefCount = 0;
+	String soundFilePath = "MinecraftOefSound.wav";
 
-
-
+	public static int oofCount = 0;
 
 
 	@Inject
@@ -95,6 +98,7 @@ public class OefPlugin extends Plugin {
 		}
 	}
 
+	@SneakyThrows
 	private void playSound()
 	{
 		if(clip != null)
@@ -102,11 +106,16 @@ public class OefPlugin extends Plugin {
 			clip.close();
 		}
 
-		File soundFile = new File("src/main/resources/MinecraftOefSound.wav");
 
-		if(!tryToLoadFile(soundFile)) return;
+		/* fix for not working in a jar */
+		Class c = Class.forName("com.code.OefPlugin");
+		URL url = c.getClassLoader().getResource(soundFilePath);
+		AudioInputStream soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
 
-		oefCount++;
+		if(soundFileAudioInputStream == null) System.out.println("issue with soundaudio filestream");
+		if(!tryToLoadFile(soundFileAudioInputStream)) return;
+
+		oofCount++;
 
 		//volume
 		FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
@@ -116,22 +125,14 @@ public class OefPlugin extends Plugin {
 		clip.loop(0);
 	}
 
-	private boolean tryToLoadFile(File soundFile)
+	private boolean tryToLoadFile(AudioInputStream sound)
 	{
-		if (soundFile.exists())
+		try
 		{
-			try (InputStream fileStream = new BufferedInputStream(new FileInputStream(soundFile));
-				 AudioInputStream sound = AudioSystem.getAudioInputStream(fileStream))
-			{
-				clip = AudioSystem.getClip();
-				clip.open(sound);
-				return true;
-			}
-			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e)
-			{
-				log.warn("Could not load the file: ", e);
-			}
-		}
+			clip = AudioSystem.getClip();
+			clip.open(sound);
+			return true;
+		} catch (LineUnavailableException | IOException e) {log.warn("Could not load the file: ", e);}
 		return false;
 	}
 
