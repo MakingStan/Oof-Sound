@@ -4,11 +4,14 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-import javax.swing.*;
-
 @ConfigGroup("Oof Sound")
 public interface OefConfig extends Config
 {
+
+	enum SoundToPlay {
+		OofSound,
+		SpongebobSound
+	}
 	@ConfigItem(
 		keyName = "Death",
 		name = "Death",
@@ -29,7 +32,15 @@ public interface OefConfig extends Config
 		return true;
 	}
 
-
+	@ConfigItem(
+			keyName= "whichSoundToPlay",
+			name = "Which Sound",
+			description = "Choose which sound to play."
+	)
+	default SoundToPlay whichSoundToPlay()
+	{
+		return SoundToPlay.OofSound;
+	}
 	@ConfigItem(
 			keyName = "Overlay",
 			name = "Overlay",

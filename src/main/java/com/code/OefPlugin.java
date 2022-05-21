@@ -26,6 +26,7 @@ import java.net.URL;
 public class OefPlugin extends Plugin {
 
 	String soundFilePath = "MinecraftOefSound.wav";
+	String soundFilePath2 = "SpongebobDisaSound.wav";
 
 	public static int oofCount = 0;
 
@@ -96,36 +97,57 @@ public class OefPlugin extends Plugin {
 		}
 	}
 
-	private void playSound()
-	{
-		if(clip != null)
-		{
+	private void playSound() {
+		if (clip != null) {
 			clip.close();
 		}
 
+		if (config.whichSoundToPlay() == OefConfig.SoundToPlay.OofSound) {
+			/* fix for not working in a jar */
+			Class c = null;
+			AudioInputStream soundFileAudioInputStream = null;
+			try {
+				c = Class.forName("com.code.OefPlugin");
+				URL url = c.getClassLoader().getResource(soundFilePath);
+				soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
+			} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
+				e.printStackTrace();
+			}
 
-		/* fix for not working in a jar */
-		Class c = null;
-		AudioInputStream soundFileAudioInputStream = null;
-		try {
-			c = Class.forName("com.code.OefPlugin");
-			URL url = c.getClassLoader().getResource(soundFilePath);
-			soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
-		} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
-			e.printStackTrace();
+			if (soundFileAudioInputStream == null) return;
+			if (!tryToLoadFile(soundFileAudioInputStream)) return;
+
+			oofCount++;
+
+			//volume
+			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			float volumeValue = config.volume() - 100;
+
+			volume.setValue(volumeValue);
+			clip.loop(0);
+		} else if (config.whichSoundToPlay() == OefConfig.SoundToPlay.SpongebobSound) {
+			Class c = null;
+			AudioInputStream soundFileAudioInputStream = null;
+			try {
+				c = Class.forName("com.code.OefPlugin");
+				URL url = c.getClassLoader().getResource(soundFilePath2);
+				soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
+			} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
+				e.printStackTrace();
+			}
+
+			if (soundFileAudioInputStream == null) return;
+			if (!tryToLoadFile(soundFileAudioInputStream)) return;
+
+			oofCount++;
+
+			//volume
+			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			float volumeValue = config.volume() - 100;
+
+			volume.setValue(volumeValue);
+			clip.loop(0);
 		}
-
-		if(soundFileAudioInputStream == null) return;
-		if(!tryToLoadFile(soundFileAudioInputStream)) return;
-
-		oofCount++;
-
-		//volume
-		FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-		float volumeValue = config.volume() - 100;
-
-		volume.setValue(volumeValue);
-		clip.loop(0);
 	}
 
 	private boolean tryToLoadFile(AudioInputStream sound)
