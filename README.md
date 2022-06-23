@@ -1,6 +1,6 @@
 #Oof Sound
 
-Makes an oof sound when you die or take damage.
+Makes an oof or spongebob sound when you die or take damage. Plus a toggleable oof counter!
 
 The minecraft oof sound is provided by:
 
