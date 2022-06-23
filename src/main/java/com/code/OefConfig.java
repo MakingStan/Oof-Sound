@@ -9,13 +9,14 @@ public interface OefConfig extends Config
 {
 
 	enum SoundToPlay {
-		OofSound,
-		SpongebobSound
+		oof,
+		Spongebob
 	}
 	@ConfigItem(
 		keyName = "Death",
 		name = "Death",
-		description = "Make an oof sound when you die!"
+		description = "Make an oof sound when you die!",
+		position = 4
 	)
 	default boolean death()
 	{
@@ -25,7 +26,8 @@ public interface OefConfig extends Config
 	@ConfigItem(
 			keyName = "Damage",
 			name = "Damage",
-			description = "Make an oof sound when you take damage!"
+			description = "Make an oof sound when you take damage!",
+			position = 3
 	)
 	default boolean damage()
 	{
@@ -35,16 +37,18 @@ public interface OefConfig extends Config
 	@ConfigItem(
 			keyName= "whichSoundToPlay",
 			name = "Which Sound",
-			description = "Choose which sound to play."
+			description = "Choose which sound to play.",
+			position = 1
 	)
 	default SoundToPlay whichSoundToPlay()
 	{
-		return SoundToPlay.OofSound;
+		return SoundToPlay.oof;
 	}
 	@ConfigItem(
 			keyName = "Overlay",
 			name = "Overlay",
-			description = "Toggle the overlay."
+			description = "Toggle the overlay.",
+			position = 5
 	)
 	default boolean overlay()
 	{
@@ -54,7 +58,8 @@ public interface OefConfig extends Config
 	@ConfigItem(
 			keyName = "Volume",
 			name = "Volume",
-			description = "At what volume you want to play the oof sounds."
+			description = "At what volume you want to play the oof sounds.",
+			position = 2
 	)
 	default int volume()
 	{

@@ -76,10 +76,10 @@ public class OefPlugin extends Plugin {
 			if (config.death())
 			{
 				System.out.println("Death");
-				if (deathOccured == false) {
+				if (!deathOccured) {
 					playSound();
 					deathOccured = true;
-				}else if (deathOccured == true) {
+				}else if (deathOccured) {
 						System.out.println("I think they died again but I didn't do anything just incase!");
 						wait(5000);
 						deathOccured = false;
@@ -106,7 +106,7 @@ public class OefPlugin extends Plugin {
 
 	private void playSound() {
 
-		if (config.whichSoundToPlay() == OefConfig.SoundToPlay.OofSound) {
+		if (config.whichSoundToPlay() == OefConfig.SoundToPlay.oof) {
 			if (clip != null) {
 				clip.close();
 			}
@@ -132,7 +132,7 @@ public class OefPlugin extends Plugin {
 
 			volume.setValue(volumeValue);
 			clip.loop(0);
-		} else if (config.whichSoundToPlay() == OefConfig.SoundToPlay.SpongebobSound) {
+		} else if (config.whichSoundToPlay() == OefConfig.SoundToPlay.Spongebob) {
 			if (clip != null) {
 				clip.close();
 			}
