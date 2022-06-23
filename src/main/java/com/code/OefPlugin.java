@@ -28,6 +28,7 @@ public class OefPlugin extends Plugin {
 	String soundFilePath = "MinecraftOefSound.wav";
 	String soundFilePath2 = "SpongebobDisaSound.wav";
 
+	public boolean deathOccured = false;
 	public static int oofCount = 0;
 
 
@@ -75,8 +76,14 @@ public class OefPlugin extends Plugin {
 			if (config.death())
 			{
 				System.out.println("Death");
-
-				playSound();
+				if (deathOccured == false) {
+					playSound();
+					deathOccured = true;
+				}else if (deathOccured == true) {
+						System.out.println("I think they died again but I didn't do anything just incase!");
+						wait(5000);
+						deathOccured = false;
+				}
 			}
 		}
 	}
@@ -98,11 +105,11 @@ public class OefPlugin extends Plugin {
 	}
 
 	private void playSound() {
-		if (clip != null) {
-			clip.close();
-		}
 
 		if (config.whichSoundToPlay() == OefConfig.SoundToPlay.OofSound) {
+			if (clip != null) {
+				clip.close();
+			}
 			/* fix for not working in a jar */
 			Class c = null;
 			AudioInputStream soundFileAudioInputStream = null;
@@ -126,6 +133,10 @@ public class OefPlugin extends Plugin {
 			volume.setValue(volumeValue);
 			clip.loop(0);
 		} else if (config.whichSoundToPlay() == OefConfig.SoundToPlay.SpongebobSound) {
+			if (clip != null) {
+				clip.close();
+			}
+
 			Class c = null;
 			AudioInputStream soundFileAudioInputStream = null;
 			try {
@@ -161,6 +172,17 @@ public class OefPlugin extends Plugin {
 		return false;
 	}
 
+	public static void wait(int ms)
+	{
+		try
+		{
+			Thread.sleep(ms);
+		}
+		catch(InterruptedException ex)
+		{
+			Thread.currentThread().interrupt();
+		}
+	}
 
 	@Provides
 	OefConfig provideConfig(ConfigManager configManager)
