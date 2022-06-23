@@ -26,7 +26,9 @@ import java.net.URL;
 public class OefPlugin extends Plugin {
 
 	String soundFilePath = "MinecraftOefSound.wav";
+	String soundFilePath2 = "SpongebobDisaSound.wav";
 
+	public boolean deathOccured = false;
 	public static int oofCount = 0;
 
 
@@ -74,8 +76,14 @@ public class OefPlugin extends Plugin {
 			if (config.death())
 			{
 				System.out.println("Death");
-
-				playSound();
+				if (!deathOccured) {
+					playSound();
+					deathOccured = true;
+				}else if (deathOccured) {
+						System.out.println("I think they died again but I didn't do anything just incase!");
+						wait(5000);
+						deathOccured = false;
+				}
 			}
 		}
 	}
@@ -96,36 +104,61 @@ public class OefPlugin extends Plugin {
 		}
 	}
 
-	private void playSound()
-	{
-		if(clip != null)
-		{
-			clip.close();
+	private void playSound() {
+
+		if (config.whichSoundToPlay() == OefConfig.SoundToPlay.oof) {
+			if (clip != null) {
+				clip.close();
+			}
+			/* fix for not working in a jar */
+			Class c = null;
+			AudioInputStream soundFileAudioInputStream = null;
+			try {
+				c = Class.forName("com.code.OefPlugin");
+				URL url = c.getClassLoader().getResource(soundFilePath);
+				soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
+			} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
+				e.printStackTrace();
+			}
+
+			if (soundFileAudioInputStream == null) return;
+			if (!tryToLoadFile(soundFileAudioInputStream)) return;
+
+			oofCount++;
+
+			//volume
+			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			float volumeValue = config.volume() - 100;
+
+			volume.setValue(volumeValue);
+			clip.loop(0);
+		} else if (config.whichSoundToPlay() == OefConfig.SoundToPlay.Spongebob) {
+			if (clip != null) {
+				clip.close();
+			}
+
+			Class c = null;
+			AudioInputStream soundFileAudioInputStream = null;
+			try {
+				c = Class.forName("com.code.OefPlugin");
+				URL url = c.getClassLoader().getResource(soundFilePath2);
+				soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
+			} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
+				e.printStackTrace();
+			}
+
+			if (soundFileAudioInputStream == null) return;
+			if (!tryToLoadFile(soundFileAudioInputStream)) return;
+
+			oofCount++;
+
+			//volume
+			FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			float volumeValue = config.volume() - 100;
+
+			volume.setValue(volumeValue);
+			clip.loop(0);
 		}
-
-
-		/* fix for not working in a jar */
-		Class c = null;
-		AudioInputStream soundFileAudioInputStream = null;
-		try {
-			c = Class.forName("com.code.OefPlugin");
-			URL url = c.getClassLoader().getResource(soundFilePath);
-			soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
-		} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
-			e.printStackTrace();
-		}
-
-		if(soundFileAudioInputStream == null) return;
-		if(!tryToLoadFile(soundFileAudioInputStream)) return;
-
-		oofCount++;
-
-		//volume
-		FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-		float volumeValue = config.volume() - 100;
-
-		volume.setValue(volumeValue);
-		clip.loop(0);
 	}
 
 	private boolean tryToLoadFile(AudioInputStream sound)
@@ -139,6 +172,17 @@ public class OefPlugin extends Plugin {
 		return false;
 	}
 
+	public static void wait(int ms)
+	{
+		try
+		{
+			Thread.sleep(ms);
+		}
+		catch(InterruptedException ex)
+		{
+			Thread.currentThread().interrupt();
+		}
+	}
 
 	@Provides
 	OefConfig provideConfig(ConfigManager configManager)
