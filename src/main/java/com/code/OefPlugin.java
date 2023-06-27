@@ -21,7 +21,7 @@ import java.net.URL;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Oof Sound"
+		name = "Oof Sound"
 )
 public class OefPlugin extends Plugin {
 
@@ -52,12 +52,32 @@ public class OefPlugin extends Plugin {
 	protected void startUp() throws Exception
 	{
 		overlayManager.add(overlay);
+
+		Class c = null;
+		AudioInputStream soundFileAudioInputStream = null;
+		try{
+			c = Class.forName("com.code.OefPlugin");
+			URL url = c.getClassLoader().getResource(soundFilePath);
+			soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
+		}
+		catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
+			e.printStackTrace();
+		}
+
+		if(soundFileAudioInputStream == null) return;
+
+		try
+		{
+			clip = AudioSystem.getClip();
+			clip.open(soundFileAudioInputStream);
+		} catch (LineUnavailableException | IOException e) {log.warn("Could not load the file: ", e);}
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
 		overlayManager.remove(overlay);
+		clip.stop();
 		clip.close();
 	}
 
@@ -66,6 +86,7 @@ public class OefPlugin extends Plugin {
 	@Subscribe
 	public void onAnimationChanged(AnimationChanged animationChanged)
 	{
+		if(client.getLocalPlayer() == null) return;
 		if (client.getLocalPlayer().getHealthRatio() != 0) return;
 		if (client.getLocalPlayer().getAnimation() != AnimationID.DEATH) return;
 
@@ -98,25 +119,7 @@ public class OefPlugin extends Plugin {
 
 	private void playSound()
 	{
-		if(clip != null)
-		{
-			clip.close();
-		}
-
-
-		/* fix for not working in a jar */
-		Class c = null;
-		AudioInputStream soundFileAudioInputStream = null;
-		try {
-			c = Class.forName("com.code.OefPlugin");
-			URL url = c.getClassLoader().getResource(soundFilePath);
-			soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
-		} catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
-			e.printStackTrace();
-		}
-
-		if(soundFileAudioInputStream == null) return;
-		if(!tryToLoadFile(soundFileAudioInputStream)) return;
+		if(clip.isActive()) clip.stop();
 
 		oofCount++;
 
@@ -125,18 +128,8 @@ public class OefPlugin extends Plugin {
 		float volumeValue = config.volume() - 100;
 
 		volume.setValue(volumeValue);
-		clip.loop(0);
-	}
-
-	private boolean tryToLoadFile(AudioInputStream sound)
-	{
-		try
-		{
-			clip = AudioSystem.getClip();
-			clip.open(sound);
-			return true;
-		} catch (LineUnavailableException | IOException e) {log.warn("Could not load the file: ", e);}
-		return false;
+		clip.setFramePosition(0);
+		clip.start();
 	}
 
 
