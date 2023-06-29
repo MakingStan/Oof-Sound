@@ -56,11 +56,10 @@ public class OefPlugin extends Plugin {
 		Class c = null;
 		AudioInputStream soundFileAudioInputStream = null;
 		try{
-			c = Class.forName("com.code.OefPlugin");
-			URL url = c.getClassLoader().getResource(soundFilePath);
+			URL url = OefPlugin.class.getClassLoader().getResource(soundFilePath);
 			soundFileAudioInputStream = AudioSystem.getAudioInputStream(url);
 		}
-		catch (ClassNotFoundException | UnsupportedAudioFileException | IOException e) {
+		catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 		}
 
